@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+	
+	<title>View Course</title>
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+		<link rel="stylesheet" th:href="@{/CSS/style.css}">
+
+</head>
+<body>
+<div>
+
+	<h1>Welcome to TuneHub !</h1>
+    
+    <h2>Why Choose Us?</h2>
+    
+    <ol>
+        <li><h3><strong>Unparalleled Music Experience:</strong></h3> Immerse yourself in a world of limitless music with our curated playlists, personalized recommendations, and high-quality audio streaming. Discover new favorites and rediscover old classics like never before.</li>
+        
+        <li><h3><strong>Ad-Free Listening:</strong></h3> Say goodbye to interruptions and distractions. Enjoy uninterrupted music playback without any pesky ads getting in the way. Focus on what matters most – the music.</li>
+        
+        <li><h3><strong>Exclusive Content:</strong> </h3>Gain access to exclusive releases, live performances, and behind-the-scenes content from your favorite artists. Be the first to listen to new tracks and explore hidden gems not available anywhere else.</li>
+        
+        <li><h3><strong>Supporting Artists and Creativity:</strong></h3> By choosing [Your Music App Name], you're directly supporting the artists and musicians whose work you love. Your subscription helps compensate creators fairly and fosters a thriving music ecosystem.</li>
+        
+        <li><h3><strong>Continuous Improvement:</strong></h3> We're committed to providing you with the best possible music experience. Your feedback drives our continuous development, ensuring that [Your Music App Name] evolves with your needs and preferences.</li>
+    </ol>
+    
+    <p>Choose TuneHub for a premium music experience that's tailored to you. Join our community of music enthusiasts today!</p>
+		
+    	<form id="payment-form">
+	        <button type="submit" class="buy-button" >BUY</button>
+	    </form>
+   
+</div>
+
+<script>
+$(document).ready(function() {
+    $(".buy-button").click(function(e) {
+        e.preventDefault();
+        var form = $(this).closest('form');
+        
+        
+        createOrder();
+    });
+});
+
+function createOrder() {
+	
+    $.post("/createOrder")
+        .done(function(order) {
+            order = JSON.parse(order);
+            var options = {
+                "key": "rzp_test_cSUGeE4L7EKf47",
+                "amount": order.amount_due.toString(),
+                "currency": "INR",
+                "name": "Tune Hub",
+                "description": "Test Transaction",
+                "order_id": order.id,
+                "handler": function (response) {
+                    verifyPayment(response.razorpay_order_id, response.razorpay_payment_id, response.razorpay_signature);
+                },
+                "prefill": {
+                    "name": "Your Name",
+                    "email": "test@example.com",
+                    "contact": "9999999999"
+                },
+                "notes": {
+                    "address": "Your Address"
+                },
+                "theme": {
+                    "color": "#F37254"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        })
+        .fail(function(error) {
+            console.error("Error:", error);
+        });
+}
+
+function verifyPayment(orderId, paymentId, signature) {
+     $.post("/verify", { orderId: orderId, paymentId: paymentId, signature: signature })
+         .done(function(isValid) {
+             if (isValid) {
+                 console.log("Payment successful");
+             } else {
+                 console.log("Payment failed");
+             }
+         })
+         .fail(function(error) {
+             console.error("Error:", error);
+         });
+}
+</script>
+</body>
+</html>
