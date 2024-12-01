@@ -12,7 +12,7 @@ Welcome to **TuneHub**! 🎶
 - **Secure Storage**: Keep your song files safe and accessible with robust storage solutions.
 
 #### Getting Started:
-1. Clone the repository: `git clone [https://github.com/your-username/tunehub.gi](https://github.com/KP-Pratham-S-Shetty/TuneHub)t`
+1. Clone the repository: `git clone https://github.com/KP-Pratham-S-Shetty/TuneHub`
 2. Navigate to the project directory: `cd tunehub`
 3. Follow the setup instructions in the `README.md` file to configure your environment.
 
